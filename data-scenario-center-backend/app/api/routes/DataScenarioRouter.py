@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-
+from app.api.dto.CamelModel import CamelModel
 from app.core.DataScenarioManager import data_scenario_manager_instance
 from app.api.dto.ResponseDSC import ResponseDSC
 
@@ -8,14 +8,14 @@ router = APIRouter()
 
 
 # 시나리오 목록 조회
-class DataScenarioDto(BaseModel):
+class DataScenarioDto(CamelModel):
     name: str
     description: str
     conda_environment: str
     script_path: str
 
 
-class DataScenarioListDto(BaseModel):
+class DataScenarioListDto(CamelModel):
     data_scenario_list: list[DataScenarioDto]
 
 
