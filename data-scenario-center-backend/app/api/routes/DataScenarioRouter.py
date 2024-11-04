@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
 from app.core.DataScenarioManager import data_scenario_manager_instance
+from app.api.dto.ResponseDSC import ResponseDSC
 
 router = APIRouter()
 
@@ -27,10 +28,14 @@ def convert_data_scenario_to_data_scenario_dto(data_scenario):
     )
 
 
-@router.get("/scenarios", response_model=DataScenarioListDto)
+@router.get("/scenarios", response_model=ResponseDSC[DataScenarioListDto])
 def get_data_scenarios():
     data_scenario_dto_list = list(
         map(convert_data_scenario_to_data_scenario_dto, data_scenario_manager_instance.get_data_scenario_list()))
     return {
-        "data_scenario_list": data_scenario_dto_list
+        "success": True,
+        "data": {
+            "data_scenario_list": data_scenario_dto_list
+        },
+        "error": None
     }
