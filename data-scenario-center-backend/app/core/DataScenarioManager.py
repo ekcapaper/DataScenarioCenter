@@ -3,6 +3,7 @@ import logging
 import os
 import sys
 import pathlib
+from typing import Optional
 
 import aiofiles
 import yaml
@@ -10,6 +11,12 @@ from watchfiles import awatch
 
 from app.entities.DataScenario import DataScenario
 from app.entities.DataScenarioExecutor import DataScenarioExecutor
+
+class ScenarioError(Exception):
+    pass
+
+class ScenarioNotFoundError(ScenarioError):
+    pass
 
 
 class DataScenarioManager:
@@ -72,16 +79,16 @@ class DataScenarioManager:
     def get_data_scenario_executor(self, executor_uid):
         return self.__data_scenario_executor_dict[executor_uid]
 
-    def run_scenario(self, scenario_name):
+    def run_scenario(self, scenario_name) -> str:
         data_scenario_list = list(filter(lambda scenario: scenario.name == scenario_name, self.__data_scenario_list))
         if len(data_scenario_list) == 0:
-            return False
+            raise ScenarioNotFoundError()
         else:
             data_scenario = data_scenario_list[0]
             data_scenario_executor = DataScenarioExecutor(data_scenario)
             data_scenario_executor.start()
             self.__data_scenario_executor_dict[data_scenario_executor.uid_str] = data_scenario_executor
-            return True
+            return data_scenario_executor.uid_str
 
     def stop_scenario(self, uid):
         self.__data_scenario_executor_dict[uid].stop()

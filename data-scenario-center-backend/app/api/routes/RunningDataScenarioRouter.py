@@ -1,25 +1,30 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-from app.core.DataScenarioManager import data_scenario_manager_instance
+from app.core.DataScenarioManager import data_scenario_manager_instance, ScenarioNotFoundError
+from app.api.dto.ResponseDSC import ResponseDSC
 
 router = APIRouter()
 
+class RequestCreateRunningScenario(BaseModel):
+    scenario_name: str
 
-class MessageDto(BaseModel):
-    message: str
+class ResponseCreateRunningScenario(BaseModel):
+    uid: str
 
 
 # 시나리오 시작
-@router.post("/running-scenarios/")
-def start_scenario(scenario_name: str):
-    result = data_scenario_manager_instance.run_scenario(scenario_name)
-    if result:
-        return {
-            "message": "Request to start scenario",
-        }
-    else:
-        raise HTTPException(status_code=404, detail="scenario not started")
+@router.post("/running-scenarios/", response_model=ResponseDSC[ResponseCreateRunningScenario])
+def start_scenario(request_create_running_scenario: RequestCreateRunningScenario):
+    try:
+        uid = data_scenario_manager_instance.run_scenario(request_create_running_scenario)
+        return ResponseDSC(
+            success=True,
+            data=ResponseCreateRunningScenario(uid=uid),
+            errors=None
+        )
+    except ScenarioNotFoundError:
+        raise HTTPException(status_code=404, detail="Scenario not found")
 
 
 class DataScenarioExecutorDto(BaseModel):
@@ -47,16 +52,17 @@ def convert_data_scenario_executor_to_data_scenario_executor_dto(data_scenario_e
     )
 
 
-@router.get("/running-scenarios", response_model=DataScenarioExecutorListDto)
+@router.get("/running-scenarios", response_model=ResponseDSC[DataScenarioExecutorListDto])
 def get_data_scenarios_running():
     data_scenario_executor_list = list(
         map(convert_data_scenario_executor_to_data_scenario_executor_dto,
             list(data_scenario_manager_instance.get_data_scenario_executor_dict().values())
             )
     )
-    return {
-        "data_scenario_executor_list": data_scenario_executor_list
-    }
+    return ResponseDSC(
+        success=True,
+        data=DataScenarioExecutorListDto(data_scenario_executor_list=data_scenario_executor_list)
+    )
 
 
 @router.get("/running-scenarios/{running_uid}")
