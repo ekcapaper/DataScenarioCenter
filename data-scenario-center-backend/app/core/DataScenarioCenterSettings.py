@@ -1,7 +1,9 @@
 from typing import Optional
-from pydantic import Settings
+from pydantic_settings import BaseSettings
 
-class DataScenarioCenterSettings:
+class DataScenarioCenterSettings(BaseSettings):
     projects_path: str
 
     class Config:
+        env_file = ".env"
+        env_file_encoding = "utf-8"
