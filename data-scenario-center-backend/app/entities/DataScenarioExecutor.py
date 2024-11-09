@@ -2,7 +2,6 @@ import subprocess
 import threading
 
 from app.entities.DataScenario import DataScenario
-import os
 
 class DataScenarioExecutor(threading.Thread):
     def __init__(self, data_scenario: DataScenario):
@@ -60,3 +59,4 @@ class DataScenarioExecutor(threading.Thread):
     @property
     def is_started(self):
         return self.__is_started
+
