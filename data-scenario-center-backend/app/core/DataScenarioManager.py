@@ -79,7 +79,7 @@ class DataScenarioManager:
             data_scenario_path = str(data_scenario_path)
             try:
                 yaml_dict = await load_yaml(data_scenario_path)
-                script_path = pathlib.Path(data_scenario_path)
+                script_path = pathlib.Path(str(data_scenario_path)).parent / "main.py"
                 data_scenario_data = yaml_dict["DataScenario"]
                 data_scenario = DataScenario(
                                     name=data_scenario_data["name"],
