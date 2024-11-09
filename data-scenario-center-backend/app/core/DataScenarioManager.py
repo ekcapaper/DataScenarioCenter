@@ -11,6 +11,7 @@ from watchfiles import awatch
 
 from app.entities.DataScenario import DataScenario
 from app.entities.DataScenarioExecutor import DataScenarioExecutor
+from app.core.DataScenarioCenterSettings import DataScenarioCenterSettings
 
 class DataScenarioError(Exception):
     pass
@@ -20,7 +21,17 @@ class DataScenarioNotFoundError(DataScenarioError):
 
 
 class DataScenarioManager:
-    def __init__(self, projects_path=None):
+    __instance = None
+
+    def __init__(self, data_scenario_center_settings: DataScenarioCenterSettings):
+        self.__data_scenario_center_settings = data_scenario_center_settings
+
+    @classmethod
+    def get_instance(cls, data_scenario_center_settings: DataScenarioCenterSettings):
+        if cls.__instance is None:
+            cls.__instance = cls(data_scenario_center_settings)
+        return cls.__instance
+
         if projects_path is None:
             self.__projects_path = os.path.dirname(os.path.abspath(sys.argv[0]))
         else:
