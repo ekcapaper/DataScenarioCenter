@@ -75,11 +75,11 @@ class DataScenarioManager:
 
         # 3. reload
         data_scenario_yaml_paths = search_paths_data_scenario_yaml_file(self.__data_scenario_center_settings.projects_path)
-        for data_scenario_path in data_scenario_yaml_paths:
-            data_scenario_path = str(data_scenario_path)
+        for data_scenario_yaml_path in data_scenario_yaml_paths:
+            data_scenario_yaml_path = str(data_scenario_yaml_path)
             try:
-                yaml_dict = await load_yaml(data_scenario_path)
-                script_path = pathlib.Path(str(data_scenario_path)).parent / "main.py"
+                yaml_dict = await load_yaml(data_scenario_yaml_path)
+                script_path = pathlib.Path(str(data_scenario_yaml_path)).parent / "main.py"
                 data_scenario_data = yaml_dict["DataScenario"]
                 data_scenario = DataScenario(
                                     name=data_scenario_data["name"],
@@ -90,5 +90,5 @@ class DataScenarioManager:
                 data_scenario_executor = DataScenarioExecutor(data_scenario)
                 self.__data_scenario_executors[data_scenario.name] = data_scenario_executor
             except KeyError as ke:
-                self.__logger.error(f"{data_scenario_path} is not enough values")
+                self.__logger.error(f"{data_scenario_yaml_path} is not enough values")
                 self.__logger.error(ke)
