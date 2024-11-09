@@ -1,0 +1,2 @@
+class FailedKillException(Exception):
+    pass
