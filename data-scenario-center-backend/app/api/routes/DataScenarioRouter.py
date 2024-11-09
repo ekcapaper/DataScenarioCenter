@@ -84,3 +84,12 @@ async def stop_scenario(
     return ResponseDSC(
         success=True,
     )
+
+@router.post("/scenarios/refresh")
+async def refresh_scenario(
+    data_scenario_manager: DataScenarioManager = Depends(get_data_scenario_manager),
+):
+    await data_scenario_manager.refresh_data_scenario()
+    return ResponseDSC(
+        success=True,
+    )
