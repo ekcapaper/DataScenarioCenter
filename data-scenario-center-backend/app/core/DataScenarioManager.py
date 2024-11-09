@@ -92,3 +92,5 @@ class DataScenarioManager:
             except KeyError as ke:
                 self.__logger.error(f"{data_scenario_yaml_path} is not enough values")
                 self.__logger.error(ke)
+                
+        # 4. recover status(active)
