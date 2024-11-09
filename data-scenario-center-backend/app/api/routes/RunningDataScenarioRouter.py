@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from app.api.dto.CamelModel import CamelModel
-from app.core.DataScenarioManager import data_scenario_manager_instance, ScenarioNotFoundError
+from app.core.DataScenarioManager import data_scenario_manager_instance, DataScenarioNotFoundError
 from app.api.dto.ResponseDSC import ResponseDSC
 
 router = APIRouter()
@@ -23,7 +23,7 @@ def start_scenario(request_create_running_scenario: RequestCreateRunningScenario
             data=ResponseCreateRunningScenario(uid=uid),
             errors=None
         )
-    except ScenarioNotFoundError:
+    except DataScenarioNotFoundError:
         raise HTTPException(status_code=404, detail="Scenario not found")
 
 

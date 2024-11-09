@@ -12,10 +12,10 @@ from watchfiles import awatch
 from app.entities.DataScenario import DataScenario
 from app.entities.DataScenarioExecutor import DataScenarioExecutor
 
-class ScenarioError(Exception):
+class DataScenarioError(Exception):
     pass
 
-class ScenarioNotFoundError(ScenarioError):
+class DataScenarioNotFoundError(DataScenarioError):
     pass
 
 
@@ -82,7 +82,7 @@ class DataScenarioManager:
     def run_scenario(self, scenario_name) -> str:
         data_scenario_list = list(filter(lambda scenario: scenario.name == scenario_name, self.__data_scenario_list))
         if len(data_scenario_list) == 0:
-            raise ScenarioNotFoundError()
+            raise DataScenarioNotFoundError()
         else:
             data_scenario = data_scenario_list[0]
             data_scenario_executor = DataScenarioExecutor(data_scenario)
