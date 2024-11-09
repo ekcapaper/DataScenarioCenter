@@ -1,8 +1,9 @@
 import subprocess
 
 from app.entities.DataScenario import DataScenario
+from threading import Thread
 
-class DataScenarioExecutor:
+class DataScenarioExecutor(Thread):
     def __init__(self, data_scenario: DataScenario):
         super().__init__()
         self.__data_scenario = data_scenario
@@ -11,27 +12,15 @@ class DataScenarioExecutor:
         self.run()
 
     def run(self):
-        script_to_run = self.__data_scenario.script_path_str
-
-
-    def run(self):
-
-        command = f"conda run -n {self.__data_scenario.conda_environment} python {script_to_run}"
+        command = f"conda run -n {self.__data_scenario.conda_environment} python {self.__data_scenario.script_path_str}"
+        # popen 객체 생성
         self.__popen_instance = subprocess.Popen(command, shell=True)
-        self.__is_running = True
-        self.__is_started = True
-        self.__uid = self.__popen_instance.pid
+        # 실행 대기
         self.__popen_instance.wait()
-
         # 프로세스가 완료될 때까지 기다리고 결과를 받음
         stdout, stderr = self.__popen_instance.communicate()
-
         # 종료 코드 확인
         return_code = self.__popen_instance.returncode
-
-        #print(f"표준 출력: {stdout}")
-        #print(f"표준 에러: {stderr}")
-        #print(f"종료 코드: {return_code}")
 
     def stop(self):
         self.request_stop()
@@ -51,14 +40,5 @@ class DataScenarioExecutor:
         return self.__is_running
 
     @property
-    def uid_str(self):
-        return str(self.__uid)
-
-    @property
     def data_scenario(self):
         return self.__data_scenario
-
-    @property
-    def is_started(self):
-        return self.__is_started
-
