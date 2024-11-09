@@ -1,19 +1,21 @@
 import subprocess
-import threading
 
 from app.entities.DataScenario import DataScenario
 
-class DataScenarioExecutor(threading.Thread):
+class DataScenarioExecutor:
     def __init__(self, data_scenario: DataScenario):
         super().__init__()
         self.__data_scenario = data_scenario
-        self.__is_running = False
-        self.__is_started = False
-        self.__popen_instance = None
-        self.__uid = None
+
+    def start(self):
+        self.run()
 
     def run(self):
         script_to_run = self.__data_scenario.script_path_str
+
+
+    def run(self):
+
         command = f"conda run -n {self.__data_scenario.conda_environment} python {script_to_run}"
         self.__popen_instance = subprocess.Popen(command, shell=True)
         self.__is_running = True
