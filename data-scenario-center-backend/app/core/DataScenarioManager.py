@@ -12,6 +12,7 @@ from watchfiles import awatch
 from app.entities.DataScenario import DataScenario
 from app.entities.DataScenarioExecutor import DataScenarioExecutor
 from app.core.DataScenarioCenterSettings import DataScenarioCenterSettings
+from loguru import logger
 
 class DataScenarioError(Exception):
     pass
@@ -24,7 +25,11 @@ class DataScenarioManager:
     __instance = None
 
     def __init__(self, data_scenario_center_settings: DataScenarioCenterSettings):
+        self.__logger = logger.bind(class_name=self.__class__.__name__)
         self.__data_scenario_center_settings = data_scenario_center_settings
+
+        self.__data_scenario_executors = {}
+
 
     @classmethod
     def get_instance(cls, data_scenario_center_settings: DataScenarioCenterSettings):
@@ -32,31 +37,57 @@ class DataScenarioManager:
             cls.__instance = cls(data_scenario_center_settings)
         return cls.__instance
 
-        if projects_path is None:
-            self.__projects_path = os.path.dirname(os.path.abspath(sys.argv[0]))
-        else:
-            self.__projects_path = projects_path
-        self.__data_scenario_list = []
-        self.__data_scenario_executor_dict = {}
-        self.__logger = logging.Logger(self.__class__.__name__)
+    # data scenario functions
+    def start_data_scenario(self, name: str):
+        pass
 
-    def reset_projects_dsm(self):
-        self.__data_scenario_list = []
+    async def stop_data_scenario(self, name: str):
+        pass
 
-    async def load_projects_dsm(self):
-        # inner function
+    def get_data_scenario(self, name: str):
+        pass
+
+    @property
+    def data_scenario_executors(self):
+        return self.__data_scenario_executors
+
+    # data scenarios function
+    async def refresh_data_scenario(self):
         async def load_yaml(file_path):
             async with aiofiles.open(file_path, mode='r') as file:
                 contents = await file.read()
                 return yaml.safe_load(contents)
 
-        def get_dsm_yaml_file_paths(directory):
+        def search_paths_data_scenario_yaml_file(directory):
             yaml_files = []
             for root, dirs, files in os.walk(directory):
                 for file in files:
-                    if file.endswith('dsm.yaml'):
+                    if file.endswith('data-scenario.yaml'):
                         yaml_files.append(os.path.join(root, file))
             return yaml_files
+
+        # 1. stop executors
+        for data_scenario_name in self.__data_scenario_executors.keys():
+            await self.stop_data_scenario(data_scenario_name)
+
+        # 2. reset
+        self.__data_scenario_executors = {}
+
+        # 3. reload
+        data_scenario_yaml_paths = search_paths_data_scenario_yaml_file(self.__data_scenario_center_settings.projects_path)
+        for data_scenario_path in data_scenario_yaml_paths:
+            data_scenario_path = str(data_scenario_path)
+            try:
+                yaml_dict = await load_yaml(data_scenario_path)
+                script_path = pathlib.Path(data_scenario_path)
+                data_scenario_data = yaml_dict["DataScenario"]
+                data_scenario = DataScenario(data_scenario_data, data_scenario_path)
+
+
+
+    async def load_projects_dsm(self):
+        # inner function
+
 
         # task
         # 1. reset

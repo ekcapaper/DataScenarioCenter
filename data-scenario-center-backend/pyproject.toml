@@ -13,6 +13,7 @@ aiofiles = "^24.1.0"
 pyyaml = "^6.0.2"
 watchfiles = "^0.24.0"
 pydantic-settings = "^2.6.1"
+loguru = "^0.7.2"
 
 [build-system]
 requires = ["poetry-core"]
