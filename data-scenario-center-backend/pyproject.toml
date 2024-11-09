@@ -12,6 +12,7 @@ uvicorn = "^0.32.0"
 aiofiles = "^24.1.0"
 pyyaml = "^6.0.2"
 watchfiles = "^0.24.0"
+pydantic-settings = "^2.6.1"
 
 [build-system]
 requires = ["poetry-core"]
