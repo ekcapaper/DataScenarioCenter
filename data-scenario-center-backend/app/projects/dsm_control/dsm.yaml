@@ -1,4 +1,0 @@
-DataScenario:
-  name: dsm_control
-  description: hello world
-  conda-environment: base

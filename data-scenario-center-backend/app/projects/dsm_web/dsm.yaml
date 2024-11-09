@@ -1,4 +1,0 @@
-DataScenario:
-  name: dsm_web
-  description: hello world
-  conda-environment: base
