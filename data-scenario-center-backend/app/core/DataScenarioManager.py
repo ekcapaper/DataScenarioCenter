@@ -42,7 +42,7 @@ class DataScenarioManager:
         self.get_data_scenario(name).start()
 
     async def stop_data_scenario(self, name: str):
-        self.get_data_scenario(name).stop()
+        await self.get_data_scenario(name).stop()
 
     def get_data_scenario(self, name: str) -> DataScenarioExecutor:
         return self.__data_scenario_executors[name]
@@ -50,6 +50,10 @@ class DataScenarioManager:
     @property
     def data_scenario_executors(self):
         return self.__data_scenario_executors
+
+    @property
+    def data_scenarios(self):
+        return list(map(lambda x:x.data_scenario, self.data_scenario_executors.values()))
 
     # data scenarios function
     async def refresh_data_scenario(self):
